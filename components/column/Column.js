@@ -1,10 +1,10 @@
 import { useDrop } from "react-dnd";
 import { ItemTypes } from "../item/Item";
 
-export default function Column({ children }) {
+export default function Column({ children, name }) {
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.CARD,
-    drop: () => ({ name: "Card" }),
+    drop: () => ({ name }),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop()

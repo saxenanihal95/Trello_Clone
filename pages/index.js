@@ -3,15 +3,20 @@ import Column from "../components/column/Column";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import Item from "../components/item/Item";
+import { useState } from "react";
 
 export default function IndexPage() {
-  const columns = [
+  const initalColumns = [
     {
       id: uuidv4(),
       title: "In Progress",
       items: [
         {
           title: "new item",
+          id: uuidv4()
+        },
+        {
+          title: "new item 2",
           id: uuidv4()
         }
       ]
@@ -28,14 +33,37 @@ export default function IndexPage() {
     }
   ];
 
+  const [columns, setColumns] = useState(initalColumns);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div style={{ display: "flex", height: "100vh", overflowX: "scroll" }}>
-        {columns.map((column) => (
-          <Column key={column.id}>
+        {columns.map((column, index) => (
+          <Column key={column.id} name={column.id}>
             {column.title}
             {column?.items?.map((item) => (
-              <Item key={item.id} name={item.id}>
+              <Item
+                key={item.id}
+                name={item.id}
+                end={(newItem, monitor) => {
+                  const dropResult = monitor.getDropResult();
+
+                  if (newItem && dropResult) {
+                    console.log(dropResult);
+                    const newColumnIndex = columns.findIndex(
+                      (item) => item.id === dropResult.name
+                    );
+                    const removeIndex = columns[index].items.findIndex(
+                      (i) => i.id === newItem.name
+                    );
+                    let updatedColumn = [...columns];
+                    updatedColumn[index].items.splice(removeIndex, 1);
+                    updatedColumn[newColumnIndex].items.push(item);
+                    console.log(updatedColumn);
+                    setColumns(updatedColumn);
+                  }
+                }}
+              >
                 {item.title}
               </Item>
             ))}
