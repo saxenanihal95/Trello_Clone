@@ -1,4 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
+import Column from "../components/column/Column";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+import Item from "../components/item/Item";
 
 export default function IndexPage() {
   const columns = [
@@ -25,29 +29,19 @@ export default function IndexPage() {
   ];
 
   return (
-    <div style={{ display: "flex", height: "100vh", overflowX: "scroll" }}>
-      {columns.map((column) => (
-        <div
-          key={column.id}
-          style={{
-            minWidth: 250,
-            backgroundColor: "gray",
-            height: "100%",
-            margin: "0 10px",
-            padding: "0 10px"
-          }}
-        >
-          {column.title}
-          {column?.items?.map((item) => (
-            <div
-              key={item.id}
-              style={{ backgroundColor: "blue", width: "100%", minHeight: 100 }}
-            >
-              {item.title}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div style={{ display: "flex", height: "100vh", overflowX: "scroll" }}>
+        {columns.map((column) => (
+          <Column key={column.id}>
+            {column.title}
+            {column?.items?.map((item) => (
+              <Item key={item.id} name={item.id}>
+                {item.title}
+              </Item>
+            ))}
+          </Column>
+        ))}
+      </div>
+    </DndProvider>
   );
 }
