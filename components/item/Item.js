@@ -2,10 +2,11 @@ import { useDrag } from "react-dnd";
 export const ItemTypes = { CARD: "card" };
 
 const style = {
-  backgroundColor: "blue",
+  backgroundColor: "#F4F5F7",
   width: "100%",
-  minHeight: 100,
-  margin: "10px 0"
+  padding: 10,
+  margin: "10px 0",
+  boxSizing: "border-box"
 };
 
 export default function Item({ children, name, end, title }) {

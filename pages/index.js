@@ -26,7 +26,7 @@ export default function IndexPage() {
       title: "TODO",
       items: [
         {
-          title: "new item 2",
+          title: "new item 3",
           id: uuidv4()
         }
       ]
@@ -49,17 +49,20 @@ export default function IndexPage() {
                   const dropResult = monitor.getDropResult();
 
                   if (newItem && dropResult) {
-                    console.log(dropResult);
-                    const newColumnIndex = columns.findIndex(
-                      (item) => item.id === dropResult.name
-                    );
-                    const removeIndex = columns[index].items.findIndex(
-                      (i) => i.id === newItem.name
-                    );
                     let updatedColumn = [...columns];
-                    updatedColumn[index].items.splice(removeIndex, 1);
-                    updatedColumn[newColumnIndex].items.push(item);
-                    console.log(updatedColumn);
+                    if (dropResult.name === column.id) {
+                    } else {
+                      const newColumnIndex = columns.findIndex(
+                        (item) => item.id === dropResult.name
+                      );
+                      const removeIndex = columns[index].items.findIndex(
+                        (i) => i.id === newItem.name
+                      );
+
+                      updatedColumn[index].items.splice(removeIndex, 1);
+                      updatedColumn[newColumnIndex].items.push(item);
+                    }
+
                     setColumns(updatedColumn);
                   }
                 }}

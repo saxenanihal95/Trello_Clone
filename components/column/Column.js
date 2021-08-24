@@ -15,7 +15,7 @@ export default function Column({ children, name }) {
       style={{
         minWidth: 250,
         height: "100%",
-        backgroundColor: "gray",
+        backgroundColor: "#EBECF0",
         margin: "0 10px",
         padding: "0 10px"
       }}
