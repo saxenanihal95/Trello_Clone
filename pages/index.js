@@ -3,7 +3,12 @@ import Column from "../components/column/Column";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import Item from "../components/item/Item";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Modal from "react-modal";
+import ItemModal from "../components/modal/ItemModal";
+
+Modal.setAppElement("#__next");
+let subtitle;
 
 export default function IndexPage() {
   const initalColumns = [
@@ -34,14 +39,52 @@ export default function IndexPage() {
   ];
 
   const [columns, setColumns] = useState(initalColumns);
+  const [html, setHtml] = useState("");
+
+  const initialSelectedItem = {
+    itemIndex: "",
+    columnIndex: "",
+    item: { title: "" }
+  };
+
+  const [selectedItem, setSelectedItem] = useState(initialSelectedItem);
+
+  const setModalItem = ({ columnIndex, itemIndex }) => {
+    const item = columns[columnIndex]?.items[itemIndex];
+    setHtml(item.title);
+    setSelectedItem({ columnIndex, itemIndex, item });
+  };
+
+  useEffect(() => {
+    if (html && Boolean(String(selectedItem.columnIndex))) {
+      let updatedColumn = [...columns];
+      updatedColumn[selectedItem.columnIndex].items[
+        selectedItem.itemIndex
+      ].title = html;
+      console.log(html);
+      setColumns(updatedColumn);
+    }
+  }, [html]);
+
+  const closeModal = () => {
+    setSelectedItem(initialSelectedItem);
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
+      <ItemModal
+        item={columns[selectedItem.columnIndex]?.items[selectedItem.itemIndex]}
+        column={columns[selectedItem.columnIndex]}
+        html={html}
+        setHtml={setHtml}
+        isOpen={Boolean(String(selectedItem?.itemIndex))}
+        closeModal={closeModal}
+      />
       <div style={{ display: "flex", height: "100vh", overflowX: "scroll" }}>
-        {columns.map((column, index) => (
+        {columns.map((column, columnIndex) => (
           <Column key={column.id} name={column.id}>
             {column.title}
-            {column?.items?.map((item) => (
+            {column?.items?.map((item, itemIndex) => (
               <Item
                 key={item.id}
                 name={item.id}
@@ -55,19 +98,23 @@ export default function IndexPage() {
                       const newColumnIndex = columns.findIndex(
                         (item) => item.id === dropResult.name
                       );
-                      const removeIndex = columns[index].items.findIndex(
+                      const removeIndex = columns[columnIndex].items.findIndex(
                         (i) => i.id === newItem.name
                       );
 
-                      updatedColumn[index].items.splice(removeIndex, 1);
+                      updatedColumn[columnIndex].items.splice(removeIndex, 1);
                       updatedColumn[newColumnIndex].items.push(item);
                     }
-
                     setColumns(updatedColumn);
                   }
                 }}
               >
-                {item.title}
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setModalItem({ columnIndex, itemIndex })}
+                >
+                  {item.title}
+                </div>
               </Item>
             ))}
           </Column>
